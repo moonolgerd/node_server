@@ -1,17 +1,20 @@
-import { Item } from './item';
+import { Item } from './item'
 import * as express from 'express'
 import * as shell from 'shelljs'
+import * as bodyParser from 'body-parser'
 
 class App {
-    public express: express.Express;
+    express: express.Express
+
+    jsonParser = bodyParser.json()
 
     constructor() {
-        this.express = express();
-        this.mountRoutes();
+        this.express = express()
+        this.mountRoutes()
     }
 
     private mountRoutes() {
-        const router = express.Router();
+        const router = express.Router()
 
         router.get('/', (req, res) => {
             res.json(
@@ -23,8 +26,8 @@ class App {
                         'Oleg',
                         'Tatsiana'
                     ]
-                });
-        });
+                })
+        })
 
         router.get('/items', (req, res) => {
 
@@ -32,13 +35,14 @@ class App {
                 [
                     new Item('Oleg', 10, new Date(), 'Ave P'),
                     new Item('Oleg2', 10, new Date(), 'Ave P'),
-                ]);
-        });
+                ])
+        })
 
-        router.post('/', (req, res) => {
+        router.post('/', this.jsonParser, (req, res) => {
             const server = req.body.server
             const user = req.body.user
             const password = req.body.password
+            const command = req.body.command
 
             shell.exec(`printf '${password}\n' >password.txt`)
 
@@ -67,19 +71,20 @@ class App {
                 }
                 res.send(204).end()
             })
-        });
+        })
 
-        this.express.use('/', router);
+        this.express.use('/', router)
     }
 
     copyKey(server: String, user: String) {
-        shell.exec(`sshpass -f password.txt ssh-copy-id ${user}@${server}.liquidnet.biz`, (code, stdout, stderr) => {
+        shell.exec(`sshpass -f password.txt ssh-copy-id ${user}@${server}`, (code, stdout, stderr) => {
             if (code === 1) {
                 console.error(stderr)
             } else {
-                shell.exec(`ssh -oStrictHostKeyChecking=no ${user}@${server}.liquidnet.biz hostname`, (code, stdout, stderr) => {
-                    console.log(stdout)
-                })
+                shell.exec(`ssh -oStrictHostKeyChecking=no ${user}@${server} hostname`,
+                    (code, stdout, stderr) => {
+                        console.log(stdout)
+                    })
             }
             shell.exec(`rm password.txt`)
         })
@@ -87,4 +92,4 @@ class App {
 
 }
 
-export default new App().express;
+export default new App().express

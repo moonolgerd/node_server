@@ -7,6 +7,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch via WSL",
+            "program": "${workspaceFolder}/dist/index.js",
+            "useWSL": true
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "restart": true,
             "name": "Launch via NPM",
             "runtimeExecutable": "npm",
@@ -25,7 +32,7 @@
             "program": "${workspaceRoot}/dist/index.js",
             "restart": true,
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
         }
     ]
 }

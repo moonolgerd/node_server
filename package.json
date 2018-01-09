@@ -1,15 +1,16 @@
 {
     "name": "node-server",
     "version": "1.0.0",
-    "description": "",
+    "description": "Node Server",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon -e ts -w ./src -x npm run watch:serve",
-        "watch:serve": "ts-node --inspect src/index.ts"
+        "watch:serve": "ts-node --inspect-brk src/index.ts"
     },
     "keywords": [],
-    "author": "",
+    "author": "moonolgerd",
+    "repository": "https://github.com/moonolgerd/node_server.git",
     "license": "ISC",
     "dependencies": {
         "body-parser": "^1.18.2",
