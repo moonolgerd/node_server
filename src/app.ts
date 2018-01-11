@@ -1,4 +1,5 @@
 import { Item } from './item'
+import { Beers } from './beers'
 import * as express from 'express'
 import * as shell from 'shelljs'
 import * as bodyParser from 'body-parser'
@@ -31,11 +32,17 @@ class App {
 
         router.get('/items', (req, res) => {
 
-            res.json(
-                [
-                    new Item('Oleg', 10, new Date(), 'Ave P'),
-                    new Item('Oleg2', 10, new Date(), 'Ave P'),
-                ])
+            const beers = new Beers()
+            beers.getBeers(data => {
+                res.json(data)
+            })
+        })
+
+        router.get('/orders', async (req, res) => {
+
+            const beers = new Beers()
+            const data = await beers.getData()
+            res.json(data)
         })
 
         router.post('/', this.jsonParser, (req, res) => {
@@ -53,7 +60,7 @@ class App {
 
                     shell.exec('find ~/.ssh/ -name id_rsa', (code, stdout, stderr) => {
                         if (stdout === '') {
-                            shell.exec(`ssh-keygen -t rsa -q -f ~/.ssh/id_rsa.pub -N ""`, (code, stdout, stderr) => {
+                            shell.exec(`ssh-keygen -t rsa -q -f ~/.ssh/id_rsa -N ""`, (code, stdout, stderr) => {
                                 if (code !== 0) {
                                     console.error(stderr)
                                 } else {
