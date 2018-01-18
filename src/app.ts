@@ -1,4 +1,5 @@
-import { Item } from './item'
+import { Notifications } from './notifications';
+import { Item } from './models/item'
 import { Beers } from './beers'
 import * as express from 'express'
 import * as shell from 'shelljs'
@@ -43,6 +44,12 @@ class App {
             const beers = new Beers()
             const data = await beers.getData()
             res.json(data)
+        })
+
+        router.post('/push', this.jsonParser, (req, res) => {
+            const notifications = new Notifications
+            notifications.send()
+            res.send('Done')
         })
 
         router.post('/', this.jsonParser, (req, res) => {
