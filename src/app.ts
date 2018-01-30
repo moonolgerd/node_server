@@ -4,6 +4,7 @@ import { Beers } from './beers'
 import * as express from 'express'
 import * as shell from 'shelljs'
 import * as bodyParser from 'body-parser'
+import { AzureNotifications } from './azure';
 
 class App {
     express: express.Express
@@ -48,6 +49,12 @@ class App {
 
         router.post('/push', this.jsonParser, (req, res) => {
             const notifications = new Notifications
+            notifications.send()
+            res.send('Done')
+        })
+
+        router.post('/azure', this.jsonParser, (req, res) => {
+            const notifications = new AzureNotifications
             notifications.send()
             res.send('Done')
         })
