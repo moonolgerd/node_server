@@ -1,10 +1,11 @@
-import { Notifications } from './notifications';
+import { Notifications } from './notifications'
 import { Item } from './models/item'
 import { Beers } from './beers'
 import * as express from 'express'
 import * as shell from 'shelljs'
 import * as bodyParser from 'body-parser'
 import { AzureNotifications } from './azure';
+import { Registration } from './registration'
 
 class App {
     express: express.Express
@@ -48,9 +49,31 @@ class App {
         })
 
         router.post('/push', this.jsonParser, (req, res) => {
+            const registration = new Registration
             const notifications = new Notifications
-            notifications.send()
-            res.send('Done')
+            const title = req.body.title
+            const body = req.body.body
+            registration.getDevices(rows => {
+                for (const row of rows) {
+                    notifications.send(row.token, title, body)
+                    res.sendStatus(204)
+                }
+            })
+        })
+
+        router.post('/register', this.jsonParser, (req, res) => {
+            const token = req.body.Token
+            console.log(token)
+            const registration = new Registration
+            registration.addDevice(token)
+            res.sendStatus(204)
+        })
+
+        router.get('/devices', (req, res) => {
+            const registration = new Registration
+            registration.getDevices(rows => {
+                res.json(rows)
+            })
         })
 
         router.post('/azure', this.jsonParser, (req, res) => {
