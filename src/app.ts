@@ -4,7 +4,7 @@ import { Beers } from './beers'
 import * as express from 'express'
 import * as shell from 'shelljs'
 import * as bodyParser from 'body-parser'
-import { AzureNotifications } from './azure';
+import { AzureNotifications } from './azure'
 import { Registration } from './registration'
 
 class App {
@@ -95,8 +95,10 @@ class App {
                     console.error(stderr)
                 } else if (stdout === '') {
 
+                    // tslint:disable-next-line:no-shadowed-variable
                     shell.exec('find ~/.ssh/ -name id_rsa', (code, stdout, stderr) => {
                         if (stdout === '') {
+                            // tslint:disable-next-line:no-shadowed-variable
                             shell.exec(`ssh-keygen -t rsa -q -f ~/.ssh/id_rsa -N ""`, (code, stdout, stderr) => {
                                 if (code !== 0) {
                                     console.error(stderr)
@@ -126,6 +128,7 @@ class App {
                 console.error(stderr)
             } else {
                 shell.exec(`ssh -oStrictHostKeyChecking=no ${user}@${server} hostname`,
+                    // tslint:disable-next-line:no-shadowed-variable
                     (code, stdout, stderr) => {
                         console.log(stdout)
                     })
