@@ -6,7 +6,9 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon -e ts -w ./src -x npm run watch:serve",
-        "watch:serve": "ts-node --inspect src/index.ts"
+        "watch:serve": "ts-node --inspect src/index.ts",
+        "debug": "nodemon -e ts -w ./src -x npm run watch:serve2",
+        "watch:serve2": "ts-node %NODE_DEBUG_OPTION% --inspect src/index.ts"
     },
     "keywords": [],
     "author": "moonolgerd",
