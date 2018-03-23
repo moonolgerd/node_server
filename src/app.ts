@@ -10,7 +10,7 @@ import * as morgan from 'morgan'
 import * as winston from 'winston'
 
 const config = winston.config
-const logger = new (winston.Logger)({
+export const logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({
             timestamp: function () {
@@ -32,18 +32,12 @@ class MyStream {
 const myStream = new MyStream()
 
 
-class App {
+export class App {
     express: express.Express
 
     jsonParser = bodyParser.json()
 
     constructor() {
-
-        logger.level = 'debug'
-        logger.info('Hi')
-        logger.debug('Debug')
-        logger.info('Hello again distributed logs')
-
         this.express = express()
         this.express.use(morgan('tiny', { stream: myStream }))
         this.mountRoutes()
