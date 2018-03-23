@@ -6,6 +6,31 @@ import * as shell from 'shelljs'
 import * as bodyParser from 'body-parser'
 import { AzureNotifications } from './azure'
 import { Registration } from './registration'
+import * as morgan from 'morgan'
+import * as winston from 'winston'
+
+const config = winston.config
+const logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Console)({
+            timestamp: function () {
+                return new Date(Date.now()).toLocaleString()
+            },
+            formatter: function (options) {
+                return options.timestamp() + ' ' + config.colorize(options.level, options.level.toUpperCase()) + ' ' +
+                    (options.message ? options.message : '') +
+                    (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '')
+            }
+        })
+    ]
+})
+class MyStream {
+    write(text: string) {
+        logger.info(text)
+    }
+}
+const myStream = new MyStream()
+
 
 class App {
     express: express.Express
@@ -13,7 +38,14 @@ class App {
     jsonParser = bodyParser.json()
 
     constructor() {
+
+        logger.level = 'debug'
+        logger.info('Hi')
+        logger.debug('Debug')
+        logger.info('Hello again distributed logs')
+
         this.express = express()
+        this.express.use(morgan('tiny', { stream: myStream }))
         this.mountRoutes()
     }
 
@@ -43,6 +75,7 @@ class App {
 
         router.get('/orders', async (req, res) => {
 
+            logger.info(req.baseUrl)
             const beers = new Beers()
             const data = await beers.getData()
             res.json(data)
@@ -53,17 +86,18 @@ class App {
             const notifications = new Notifications
             const title = req.body.title
             const body = req.body.body
+            logger.info(req.body)
             registration.getDevices(rows => {
                 for (const row of rows) {
                     notifications.send(row.token, title, body)
-                    res.sendStatus(204)
                 }
+                res.sendStatus(204)
             })
         })
 
         router.post('/register', this.jsonParser, (req, res) => {
             const token = req.body.Token
-            console.log(token)
+            logger.info(token)
             const registration = new Registration
             registration.addDevice(token)
             res.sendStatus(204)
