@@ -9,7 +9,9 @@ import { Registration } from './registration'
 import * as morgan from 'morgan'
 import * as winston from 'winston'
 
+const port = 3000
 const config = winston.config
+
 export const logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({
@@ -17,7 +19,7 @@ export const logger = new (winston.Logger)({
                 return new Date(Date.now()).toLocaleString()
             },
             formatter: function (options) {
-                return options.timestamp() + ' ' + config.colorize(options.level, options.level.toUpperCase()) + ' ' +
+                return options.timestamp() + ' ' + config.colorize(options.level, options.level.toUpperCase().padEnd(5)) + ' ' +
                     (options.message ? options.message : '') +
                     (options.meta && Object.keys(options.meta).length ? '\n\t' + JSON.stringify(options.meta) : '')
             }
@@ -41,6 +43,12 @@ export class App {
         this.express = express()
         this.express.use(morgan('tiny', { stream: myStream }))
         this.mountRoutes()
+        this.express.listen(port, (err: Function) => {
+            if (err) {
+                return logger.error(err.toString())
+            }
+            return logger.info(`server is listening on ${port}`)
+        })
     }
 
     private mountRoutes() {

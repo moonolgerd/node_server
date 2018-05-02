@@ -14,7 +14,7 @@ export class Notifications {
 
     send(token: string, title: string, body: string) {
 
-        var payload = {
+        const payload = {
             notification: {
                 title: title,
                 body: body
@@ -23,13 +23,13 @@ export class Notifications {
 
         // Send a message to devices subscribed to the provided topic.
         admin.messaging().sendToDevice(token, payload)
-            .then(function (response) {
+            .then(response => {
                 // See the MessagingTopicResponse reference documentation for the
                 // contents of response.
-                console.log("Successfully sent message:", response)
+                console.log('Successfully sent message:', response)
             })
-            .catch(function (error) {
-                console.log("Error sending message:", error)
+            .catch(error => {
+                console.log('Error sending message:', error)
             })
     }
 }
